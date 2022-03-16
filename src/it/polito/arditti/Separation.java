@@ -34,12 +34,14 @@ public class Separation {
     public Splitting toSplitting(int nPlayers) {
         Separation[] separations = new Separation[nPlayers];
         for (int player = 0; player < nPlayers; player++){
+            Separation separation = new Separation();
             for (Set<Integer> group : this.groups
                  ) {
                 if (group.contains(player)){
-                    separations[player].add(group);
+                    separation.add(group);
                 }
             }
+            separations[player] = separation;
         }
         Splitting splitting = new Splitting(separations);
         return splitting;
