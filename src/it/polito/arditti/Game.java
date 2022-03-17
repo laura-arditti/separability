@@ -4,43 +4,33 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Game {
-    protected final int nPlayers;
-    protected final int[] nActions;
+
+    protected final GameForm gameForm;
     protected final Utility[] utilities;
 
     public Game(int nPlayers, int[] nActions, double[][] utilities) {
-        this.nPlayers = nPlayers;
-        this.nActions = nActions;
+        this.gameForm = new GameForm(nPlayers,nActions);
         this.utilities = new Utility[nPlayers];
         for (int player = 0; player<nPlayers; player++){
-            this.utilities[player] = new Utility(this,utilities[player]);
+            this.utilities[player] = new Utility(gameForm,utilities[player]);
         }
     }
 
-    public Splitting getSplitting() {
-        Separation[] separations = new Separation[nPlayers];
+    public DirectedHypergraph getDirectedHypergraph() {
+        int nPlayers = gameForm.nPlayers;
+        Hypergraph[] hypergraphs = new Hypergraph[nPlayers];
         for (int player = 0; player<nPlayers; player++){
-            separations[player] = utilities[player].getSeparation();
+            hypergraphs[player] = utilities[player].getHypergraph();
         }
-        Splitting splitting = new Splitting(separations);
-        return splitting;
+        DirectedHypergraph directedHypergraph = new DirectedHypergraph(hypergraphs);
+        return directedHypergraph;
     }
 
-    public List<int[]> getPairsOfActions (int player){
-        List<int[]> pairsOfActions = new ArrayList<>();
-        for (int a1=0; a1<nActions[player]; a1++){
-            for (int a2=a1+1; a2<nActions[player]; a2++){
-                pairsOfActions.add(new int[]{a1, a2});
-            }
-        }
-        return pairsOfActions;
+    public GameForm getGameForm() {
+        return gameForm;
     }
 
-    public int getNConfigurations(){
-        int result = 1;
-        for (int player = 0; player<nPlayers; player++){
-            result*=nActions[player];
-        }
-        return result;
+    public Utility[] getUtilities() {
+        return utilities;
     }
 }

@@ -21,12 +21,12 @@ public class Main {
          //   }
         //}
         Game game = new Game(nPlayers, nActions, utilities);
-        Splitting splitting = game.getSplitting();
-        System.out.println(splitting);
+        DirectedHypergraph directedHypergraph = game.getDirectedHypergraph();
+        System.out.println(directedHypergraph);
 
         PotentialGame potentialGame = new PotentialGame(nPlayers, nActions, utilities);
-        Splitting normalizedSplitting = potentialGame.getNormalizedSplitting();
-        System.out.println(normalizedSplitting);
+        DirectedHypergraph normalizedDirectedHypergraph = potentialGame.getNormalizedSplitting();
+        System.out.println(normalizedDirectedHypergraph);
 
     }
 }

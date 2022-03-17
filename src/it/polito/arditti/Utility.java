@@ -1,6 +1,5 @@
 package it.polito.arditti;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -8,32 +7,32 @@ import java.util.Set;
 
 public class Utility {
     private final double[] utility;
-    private final Game game;
+    private final GameForm gameForm;
 
-    public Utility(Game game, double[] utility) {
-        this.game = game;
+    public Utility(GameForm gameForm, double[] utility) {
+        this.gameForm = gameForm;
         this.utility = utility;
     }
 
-    public Utility(Game game){
-        this.game = game;
-        this.utility= new double[game.getNConfigurations()];
+    public Utility(GameForm gameForm){
+        this.gameForm = gameForm;
+        this.utility= new double[gameForm.getNConfigurations()];
     }
 
-    public Separation getSeparation() {
-        Separation separation = new Separation();
-        for (int set = 1; set<1<<game.nPlayers; set++){
+    public Hypergraph getHypergraph() {
+        Hypergraph hypergraph = new Hypergraph();
+        for (int set = 1; set<1<< gameForm.nPlayers; set++){
             List<List<int[]>> pairList = new ArrayList<>();
             List<Integer> playerList = new ArrayList<>();
             List<Integer> maxOtherActions = new ArrayList<>();
             List<Integer> otherPlayerList = new ArrayList<>();
-            for(int player = 0; player<game.nPlayers; player++){
+            for(int player = 0; player< gameForm.nPlayers; player++){
                 if (((set>>player)&1)==1){
-                    pairList.add(game.getPairsOfActions(player));
+                    pairList.add(gameForm.getPairsOfActions(player));
                     playerList.add(player);
                 }
                 else {
-                    maxOtherActions.add(game.nActions[player]);
+                    maxOtherActions.add(gameForm.nActions[player]);
                     otherPlayerList.add(player);
                 }
             }
@@ -42,7 +41,7 @@ public class Utility {
                 position[i]=0;
             }
 
-            int[] otherActions = new int[game.nPlayers-playerList.size()];
+            int[] otherActions = new int[gameForm.nPlayers-playerList.size()];
             for (int i = 0; i<otherActions.length; i++){
                 otherActions[i]=0;
             }
@@ -62,7 +61,7 @@ public class Utility {
                     double sum = 0;
                     double sign = 1;
                     for (int vertex : grayCodes) {
-                        int[] strategy = new int[game.nPlayers];
+                        int[] strategy = new int[gameForm.nPlayers];
                         for (int i = 0; i< playerList.size(); i++){
                             strategy[playerList.get(i)] = pairList.get(i).get(position[i])[(vertex>>i)&1];
                         }
@@ -75,7 +74,7 @@ public class Utility {
 
                     if( sum != 0){
                         Set<Integer> group = new HashSet<>(playerList);
-                        separation.add(group);
+                        hypergraph.add(group);
                     }
 
                     insideFinished = true;
@@ -99,10 +98,10 @@ public class Utility {
                 }
             }
         }
-        Separation result = new Separation();
-        for (Set<Integer> group : separation.groups) {
+        Hypergraph result = new Hypergraph();
+        for (Set<Integer> group : hypergraph.groups) {
             boolean keep = true;
-            for (Set<Integer> otherGroup : separation.groups){
+            for (Set<Integer> otherGroup : hypergraph.groups){
                 if (otherGroup.containsAll(group)) {
                     if(!group.equals(otherGroup)){
                         keep = false;
@@ -121,7 +120,7 @@ public class Utility {
         int factor = 1;
         for (int player =0; player< strategy.length; player++){
             index += factor*strategy[player];
-            factor *= game.nActions[player];
+            factor *= gameForm.nActions[player];
         }
         return this.utility[index];
     }
@@ -131,7 +130,7 @@ public class Utility {
         int factor = 1;
         for (int player =0; player< strategy.length; player++){
             index += factor*strategy[player];
-            factor *= game.nActions[player];
+            factor *= gameForm.nActions[player];
         }
         this.utility[index] = value;
     }

@@ -9,8 +9,8 @@ public class PotentialGame extends Game{
 
     public Utility getPotential() {
         if(this.potential == null){
-            potential = new Utility(this);
-            Configuration start = new Configuration(this);
+            potential = new Utility(getGameForm());
+            Configuration start = new Configuration(getGameForm());
             Configuration next = start.getNext();
             while(next != null) {
                 Configuration closer = start.getCloser();
@@ -24,9 +24,9 @@ public class PotentialGame extends Game{
         return this.potential;
     }
 
-    public Splitting getNormalizedSplitting() {
-        Separation separation = this.getPotential().getSeparation();
-        Splitting splitting = separation.toSplitting(this.nPlayers);
-        return splitting;
+    public DirectedHypergraph getNormalizedSplitting() {
+        Hypergraph hypergraph = this.getPotential().getHypergraph();
+        DirectedHypergraph directedHypergraph = hypergraph.toDirected(gameForm.nPlayers);
+        return directedHypergraph;
     }
 }
